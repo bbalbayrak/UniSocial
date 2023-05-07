@@ -9,7 +9,7 @@ exports.getPosts = async (req, res, next) => {
 };
 
 exports.createPost = async (req, res, next) => {
-  const title = req.body.title;
+  const title = req.query.title;
   const description = req.body.description;
   const faculty = req.body.faculty;
 
@@ -31,4 +31,23 @@ exports.createPost = async (req, res, next) => {
     }
     next(error);
   }
+};
+
+exports.deletePost = async (req, res, next) => {
+  const postId = req.params.postId;
+
+  Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        return res
+          .status(404)
+          .json({ message: "Post that you find, can not found" });
+      }
+    })
+    .then((data) => {
+      return Post.findByIdAndRemove(postId);
+    })
+    .then((result) =>
+      res.status(200).json({ message: "Successfully Deleted !" })
+    );
 };
