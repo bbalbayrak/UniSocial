@@ -9,7 +9,7 @@ exports.getPosts = async (req, res, next) => {
 };
 
 exports.createPost = async (req, res, next) => {
-  const title = req.query.title;
+  const title = req.body.title;
   const description = req.body.description;
   const faculty = req.body.faculty;
 
