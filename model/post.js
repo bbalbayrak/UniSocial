@@ -11,7 +11,7 @@ const postSchema = new Schema(
       type: String,
       required: true,
     },
-    faculty: {
+    email: {
       type: String,
       required: true,
     },
