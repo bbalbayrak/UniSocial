@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const postRoutes = require("./routes/post");
+const commentRoutes = require("./routes/comment");
 const cors = require("cors");
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use(postRoutes);
+app.use(commentRoutes);
 
 mongoose.connect(URI).then((result) => {
   http.listen(PORT);
