@@ -10,11 +10,17 @@ exports.getComments = async (req, res, next) => {
     return res.status(404).json({ message: "Post does not exist !" });
   }
 
-  if (availablePost.comments === []) {
+  if (availablePost.comments[0] === []) {
     return res.status(400).json({ message: "No comments" });
   }
+  const mapComments = availablePost.comments.map((id) => {
+    return id._id;
+  });
+  console.log(mapComments);
 
-  const comment = await Comment.find();
+  const comment = await Comment.find({
+    _id: { $in: mapComments },
+  });
 
   const description = comment;
   if (!description) {
