@@ -12,11 +12,13 @@ exports.createPost = async (req, res, next) => {
   const title = req.body.title;
   const description = req.body.description;
   const email = req.body.email;
+  const creator = req.body.creator;
 
   const post = new Post({
     title: title,
     description: description,
     email: email,
+    creator: creator,
   });
 
   try {

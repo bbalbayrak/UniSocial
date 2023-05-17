@@ -16,7 +16,7 @@ exports.getComments = async (req, res, next) => {
   const mapComments = availablePost.comments.map((id) => {
     return id._id;
   });
-  console.log(mapComments);
+  // console.log(mapComments);
 
   const comment = await Comment.find({
     _id: { $in: mapComments },
@@ -33,9 +33,11 @@ exports.getComments = async (req, res, next) => {
 exports.postComments = async (req, res, next) => {
   const postId = req.params.postId;
   const description = req.body.description;
+  const email = req.body.email;
 
   const comment = new Comment({
     description: description,
+    email: email,
   });
 
   try {
@@ -51,6 +53,37 @@ exports.postComments = async (req, res, next) => {
     return res
       .status(201)
       .json({ message: "Comment Successfully Created !", comment: comment });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
+exports.deleteComments = async (req, res, next) => {
+  const postId = req.params.postId;
+  const commentId = req.params.commentId;
+
+  const post = await Post.findById(postId);
+  const comment = await Comment.findById(commentId);
+
+  if (!post) {
+    return res.status(404).json({ message: "Post not found !" });
+  }
+
+  if (!comment) {
+    return res.status(404).json({ message: "Comment not found !" });
+  }
+
+  console.log(comment);
+
+  try {
+    Comment.findByIdAndRemove(commentId).then((result) => {
+      return res
+        .status(201)
+        .json({ message: "Comment successfully deleted !" });
+    });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
