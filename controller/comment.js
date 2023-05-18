@@ -65,25 +65,28 @@ exports.deleteComments = async (req, res, next) => {
   const postId = req.params.postId;
   const commentId = req.params.commentId;
 
-  const post = await Post.findById(postId);
-  const comment = await Comment.findById(commentId);
-
-  if (!post) {
-    return res.status(404).json({ message: "Post not found !" });
-  }
-
-  if (!comment) {
-    return res.status(404).json({ message: "Comment not found !" });
-  }
-
-  console.log(comment);
-
   try {
-    Comment.findByIdAndRemove(commentId).then((result) => {
-      return res
-        .status(201)
-        .json({ message: "Comment successfully deleted !" });
-    });
+    const post = await Post.findById(postId);
+    const comment = await Comment.findById(commentId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found !" });
+    }
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found !" });
+    }
+
+    Comment.findByIdAndRemove(commentId)
+      .then((comment) => {
+        return Post.updateOne(
+          { _id: postId },
+          { $pull: { comments: comment._id.toString() } }
+        );
+      })
+      .then((result) => {
+        res.status(201).json({ message: "Successfully deleted !" });
+      });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
