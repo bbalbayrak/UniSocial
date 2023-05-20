@@ -94,3 +94,45 @@ exports.deleteComments = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updateComment = async (req, res, next) => {
+  const description = req.body.description;
+
+  const postId = req.params.postId;
+  const commentId = req.params.commentId;
+
+  const comment = await Comment.findById(commentId);
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    return res.status(404).json({ message: "Post not found !" });
+  }
+  if (!comment) {
+    return res.status(404).json({ message: "Comment not found !" });
+  }
+
+  if (!description || description === "") {
+    return res
+      .status(400)
+      .json({
+        message:
+          "You have to fill the blanks and you cannot leave this field blank ! ",
+      });
+  }
+
+  comment.description = description;
+
+  try {
+    await comment.save();
+
+    post.comments.push(comment);
+    return res
+      .status(201)
+      .json({ message: "Comment Successfully updated !", comment: comment });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};

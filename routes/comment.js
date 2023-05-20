@@ -2,6 +2,7 @@ const {
   getComments,
   postComments,
   deleteComments,
+  updateComment,
 } = require("../controller/comment");
 const express = require("express");
 
@@ -15,5 +16,8 @@ router.post("/createComment/:postId", postComments);
 
 //deleteComments
 router.delete("/deleteComment/:postId/:commentId", deleteComments);
+
+//updateComments
+router.put("/updateComment/:postId/:commentId", updateComment);
 
 module.exports = router;
